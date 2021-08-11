@@ -8,7 +8,7 @@ controllers:
 
 services:
     auth: 
-        ☐ readUser
+        ✔ readUser @done(21-08-11 22:31)
         ☐ writeUser
         ☐ createUser
 

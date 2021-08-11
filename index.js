@@ -1,9 +1,9 @@
 console.log("Starting...");
-// const sqlite3 = require("sqlite3").verbose();
-// const db = new sqlite3.Database("./cache/cache.db");
-// db.run(
-//   "CREATE TABLE IF NOT EXISTS register_forbidden_access(uid VARCHAR PRIMARY KEY)"
-// );
+const sqlite3 = require("sqlite3").verbose();
+const db = new sqlite3.Database("./cache/cache.db");
+db.run(
+  "CREATE TABLE IF NOT EXISTS register_forbidden_access(uid VARCHAR PRIMARY KEY)"
+);
 
 const app = require("./app");
 const AWS = require("aws-sdk");

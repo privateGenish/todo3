@@ -1,0 +1,17 @@
+controllers:
+    db: 
+        ☐ getUser
+        ☐ getUserPublicData
+        ☐ deleteUser
+        ☐ updateInfo
+        ☐ createUser
+
+services:
+    auth: 
+        ☐ readUser
+        ☐ writeUser
+        ☐ createUser
+
+routes:
+    ☐ POST /api/register
+    ☐ GET POST DELETE /api/user 

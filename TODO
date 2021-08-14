@@ -9,8 +9,8 @@ controllers:
 services:
     auth: 
         ✔ readUser @done(21-08-11 22:31)
-        ☐ writeUser
-        ☐ createUser
+        ✔ writeUser @started(21-08-12 15:56) @done(21-08-12 17:06) @lasted(1h10m28s)
+        ✔ createUser @done(21-08-12 15:56)
 
 routes:
     ☐ POST /api/register

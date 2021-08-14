@@ -6,8 +6,6 @@ db.run(
 );
 
 const app = require("./app");
-const AWS = require("aws-sdk");
-require("dotenv").config();
-this.table = process.env.TABLE;
+
 
 app.listen(3000, () => console.log("listening at http://localhost:3000/api"));

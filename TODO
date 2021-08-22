@@ -1,17 +1,35 @@
 controllers:
     db: 
-        ☐ getUser
-        ☐ getUserPublicData
-        ☐ deleteUser
+        ✔ getUser @done(21-08-17 15:44)
+        ✔ getUserPublicData @done(21-08-17 15:44)
+        ✔ deleteUser @done(21-08-18 16:19)
         ☐ updateInfo
-        ☐ createUser
+        ✔ createUser @done(21-08-17 15:44)
 
 services:
+    user:
+        ✔ register @done(21-08-18 14:02)
+        ✔ deleteUser @done(21-08-18 16:19)
+        ☐ updateUser
+        ✔ readUser @done(21-08-18 14:02)
+
+    admin:
+        ☐ superadmin
+        ☐ restricted admin
     auth: 
         ✔ readUser @done(21-08-11 22:31)
-        ✔ writeUser @started(21-08-12 15:56) @done(21-08-12 17:06) @lasted(1h10m28s)
-        ✔ createUser @done(21-08-12 15:56)
+        ✔ writeUser @started(21-08-12 15:56) @done(21-08-12 17:06) @lasted(1h10m28s) 
+        ✘ createUser @cancelled(21-08-18 11:52)
+        decided to cancel this auth middleware after considering that it's not necessery.
+        a user can be signed to the firebase console and that can have zero effect on cost or preformance.
 
 routes:
-    ☐ POST /api/register
+    ✔ POST /api/register @done(21-08-18 13:38)
     ☐ GET POST DELETE /api/user 
+
+dashboard:
+    ☐ think how.
+
+
+fixme:
+    ☐ user.services.register dont delete nor forbid users

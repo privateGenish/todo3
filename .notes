@@ -1,0 +1,6 @@
+Notes:
+    
+Security suggestions:
+for version: 0.0.0
+ - [ ] stop attacks and over uses of the api (use local storage (?)).
+ - [ ] delete users from firebase when they fail to login.

@@ -26,45 +26,48 @@ describe("user.service", () => {
     },
   };
   describe(".getUser", () => {
-    before(() => {
-      const user_controller = require("../../api/controllers/user.controller");
-      this.private = sinon.stub(user_controller, "getUser").returns("private data");
-      this.public = sinon.stub(user_controller, "getUserPublicData").returns("public data");
-    });
-    beforeEach(() => {
-      res.locals = undefined;
-    });
-    it("should return private data", async () => {
-      res.locals = { private: true };
-      const req = {
-        params: {
-          uid: "some_uid",
-        },
-      };
+    describe("unitTest", () => {
+      before(() => {
+        const user_controller = require("../../api/controllers/user.controller");
+        this.private = sinon.stub(user_controller, "getUser").returns("private data");
+        this.public = sinon.stub(user_controller, "getUserAvailableScope").returns("public data");
+      });
+      beforeEach(() => {
+        res.locals = undefined;
+      });
+      it("should return private data", async () => {
+        res.locals = { userGetItself: true };
+        const req = {
+          params: {
+            uid: "some_uid",
+          },
+        };
 
-      const response = await user_service.getUser(req, res);
-      expect(response).to.be.deep.equal({
-        statusCode: 200,
-        body: "private data",
+        const response = await user_service.getUser(req, res);
+        expect(response).to.be.deep.equal({
+          statusCode: 200,
+          body: "private data",
+        });
+        expect(this.private).to.be.calledOnce;
       });
-      expect(this.private).to.be.calledOnce;
-    });
-    it("should return public data", async () => {
-      res.locals = { private: false };
-      const req = {
-        params: {
-          uid: "some_uid",
-        },
-      };
-      const response = await user_service.getUser(req, res);
-      expect(response).to.be.deep.equal({
-        statusCode: 200,
-        body: "public data",
+      it("should return public data", async () => {
+        res.locals = { userGetItself: "" };
+        const req = {
+          params: {
+            uid: "some_uid",
+          },
+        };
+        const response = await user_service.getUser(req, res);
+        expect(response).to.be.deep.equal({
+          statusCode: 200,
+          body: "public data",
+        });
+        expect(this.public);
       });
-      expect(this.public);
     });
   });
   describe(".register", () => {
+    var next = (args) => console.log(args);
     before(() => {
       this.user = { uid: "registerUID", name: "register", email: "register@test.com" };
     });
@@ -87,17 +90,17 @@ describe("user.service", () => {
       req = { body: {} };
       next = sinon.fake();
       await user_service.register(req, res, next);
-      expect(next.lastArg).to.be.deep.equal(APIError.typeError("uid", "name", "email"));
+      expect(next.lastArg).to.be.deep.equal(APIError.typeError("uid", "name"));
     });
     after(async () => {
-      await dynamodb.deleteTestItem("USER#" + this.user.uid);
+      await dynamodb.deleteTestItem("USER#" + this.user.uid, "USER#" + this.user.uid);
     });
   });
   describe(".deleteUser", function () {
     this.timeout(50000);
     before(async () => {
       this.firebaseUser = await firebase.createUser("service.delete@test.com", "11223344");
-      this.user = await dynamodb.createTestItem("USER#" + this.firebaseUser.localId);
+      this.user = await dynamodb.createTestItem("USER#" + this.firebaseUser.localId, "USER#" + this.firebaseUser.localId);
     });
     it("should return 200 and delete from firebase and dynamodb", async () => {
       const req = {
@@ -111,6 +114,26 @@ describe("user.service", () => {
         body: undefined,
       });
       await firebase.signInWithPassword("service.delete@test.com", "11223344").catch((e) => expect(e).to.not.be.null);
+    });
+  });
+  describe(".updateUser", () => {
+    before(() => {
+      const user_controller = require("../../api/controllers/user.controller");
+      sinon.stub(user_controller, "updateUser").returns();
+    });
+    it("should return 200", async () => {
+      req = {
+        params: "some_uid",
+        body: {
+          about: "about",
+          name: "a name",
+        },
+      };
+      next = (err) => {
+        console.log(err);
+      };
+      const response = await user_service.updateUser(req, res, next);
+      expect(response.statusCode).to.be.equal(200);
     });
   });
 });

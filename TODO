@@ -1,18 +1,22 @@
 controllers:
     db: 
         ✔ getUser @done(21-08-17 15:44)
-        ✔ getUserPublicData @done(21-08-17 15:44)
+        ✔ getUserAvailbleScope @done(21-08-24 12:19)
+        ✘ getUserPublicData @cancelled(21-08-24 12:19) see notes.
         ✔ deleteUser @done(21-08-18 16:19)
-        ☐ updateInfo
+        ✔ updateInfo @done(21-08-24 16:37)
         ✔ createUser @done(21-08-17 15:44)
-
+        ✔ add liked lists @done(21-08-25 14:40)
+        ✔ remove liked lists @done(21-08-25 14:40)
+        ✔ batchGetThumbnails @done(21-08-25 12:58)
 services:
     user:
         ✔ register @done(21-08-18 14:02)
         ✔ deleteUser @done(21-08-18 16:19)
-        ☐ updateUser
+        ✔ updateUser @done(21-08-24 16:43)
         ✔ readUser @done(21-08-18 14:02)
-
+        ✔ thumnbails @done(21-08-25 16:09)
+        ✔ likedlists @done(21-08-25 16:09)
     admin:
         ☐ superadmin
         ☐ restricted admin
@@ -24,12 +28,17 @@ services:
         a user can be signed to the firebase console and that can have zero effect on cost or preformance.
 
 routes:
-    ✔ POST /api/register @done(21-08-18 13:38)
-    ☐ GET POST DELETE /api/user 
+    ✔ POST /api/register/:uid @done(21-08-18 13:38)
+    ✔ GET POST DELETE /api/user/:uid @done(21-08-25 12:41)
+    ✔ POST /api/user/thumbnails @done(21-08-25 16:10)
+    ✔ POST /api/user/:uid/likedLists @done(21-08-25 16:10)
 
 dashboard:
     ☐ think how.
 
 
 fixme:
-    ☐ user.services.register dont delete nor forbid users
+    ✔ user.services.register dont delete nor forbid users @done(21-08-25 16:10)
+
+migration:
+    ✔ GET /api/user/:uid @done(21-08-23 18:05) // migrated from middlware to controller!

@@ -1,15 +1,14 @@
 const user_controller = require("../controllers/user.controller");
 const { admin } = require("../../config/firebase.config");
-const access = require("../../cache/access");
 
 async function getUser(req, res, next) {
   try {
     const { uid } = req.params;
     let item = {};
-    if (res.locals.private) {
+    if (res.locals.userGetItself === true) {
       item = await user_controller.getUser(uid);
     } else {
-      item = await user_controller.getUserPublicData(uid);
+      item = await user_controller.getUserAvailableScope(uid, res.locals.viewerUID);
       item.Info = "Due to the given authorization parameters the response only exposes public data";
     }
     if (JSON.stringify(item) === "{}") throw APIError.itemNotFound({ uid: uid });
@@ -21,10 +20,9 @@ async function getUser(req, res, next) {
 
 async function register(req, res, next) {
   try {
-    const { name, uid, email } = req.body;
-    if (typeof uid !== "string" && typeof name !== "string" && typeof email !== "string")
-      throw APIError.typeError("uid", "name", "email");
-    await user_controller.register(uid, name, email);
+    const { name, uid } = req.body;
+    if (typeof uid !== "string" || typeof name !== "string") throw APIError.typeError("uid", "name");
+    await user_controller.register(uid, name);
     return res.status(201).send();
   } catch (err) {
     return next(err);
@@ -42,4 +40,39 @@ async function deleteUser(req, res) {
   }
 }
 
-module.exports = { getUser, register, deleteUser };
+async function updateUser(req, res, next) {
+  try {
+    const uid = req.params;
+    const { name, about } = req.body;
+    if (typeof about !== "string" || typeof name !== "string") throw APIError.typeError("about", "name");
+    await user_controller.updateUser({ uid: uid, about: about, name: name });
+    return res.status(200).send();
+  } catch (err) {
+    return next(err);
+  }
+}
+
+async function batchGetThumbnails(req, res, next) {
+  try {
+    const uids = req.body.uids;
+    if (!Array.isArray(uids)) throw APIError.typeError("uids");
+    const response = await user_controller.batchGetUsersInfo(uids);
+    res.send(response);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function batchWriteLikedList(req, res, next) {
+  try {
+    const likedLists = req.body.likedLists;
+    const uid = req.params.uid;
+    if (!Array.isArray(likedLists)) throw APIError.typeError("likedLists");
+    const response = await user_controller.batchWriteLikedList(uid, likedLists);
+    res.send(response);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { getUser, register, deleteUser, updateUser, batchGetThumbnails, batchWriteLikedList };

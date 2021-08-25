@@ -3,13 +3,14 @@ const cred = require("../../config/aws-credentials");
 const client = new DocumentClient(cred);
 const table = process.env.TABLE;
 
-async function deleteTestItem(id) {
+async function deleteTestItem(pk, sk) {
   return await client
     .delete(
       {
         TableName: table,
         Key: {
-          PK: id,
+          PK: pk,
+          SK: sk,
         },
       },
       () => {}
@@ -17,27 +18,26 @@ async function deleteTestItem(id) {
     .promise();
 }
 
-async function createTestItem(id, args) {
-  if (args)
-    return await client
-      .put({
-        TableName: table,
-        Item: {
-          PK: id,
-          args,
-        },
-      })
-      .promise();
-
+async function createTestItem(pk, sk) {
   return await client
     .put({
       TableName: table,
       Item: {
-        PK: id,
+        PK: pk,
+        SK: sk,
       },
     })
     .promise();
 }
 
+async function getSingleItem(pk, sk) {
+  return await client.get({
+    TableName: table,
+    Key: {
+      PK: pk,
+      SK: sk,
+    },
+  }).promise();
+}
 
-module.exports = { deleteTestItem, createTestItem };
+module.exports = { deleteTestItem, createTestItem, getSingleItem };

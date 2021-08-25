@@ -1,6 +1,23 @@
 Notes:
     
+
+Feauters:
+ - [ ] profile pictures and thunmbnails.
+
 Security suggestions:
-for version: 0.0.0
  - [ ] stop attacks and over uses of the api (use local storage (?)).
  - [ ] delete users from firebase when they fail to login.
+
+Premium feauters:
+- [ ] duolingo style rewards i.e styling feauters like fonts or decorations
+- [ ] remove adds
+
+betterCode:
+ - [?] add decorator to check for variable types.
+
+Migratring:
+    old model to Adjency List model:
+       1. getUserPublicData is no longer used. A new better scoped getUserAvaialbleScope is now used.
+        this method is passing a [uid: string] and a [viewerUID: string] to view each user managed or accesable lists.
+        it's important to note that if the user is viewing his own data, a different getUser(uid:string) method is invoked
+        duo to the limitaions of dynamodb.

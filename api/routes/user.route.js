@@ -6,6 +6,9 @@ const user_services = require("../services/user.services");
 
 userRouter.get("/:uid", auth_middleware.readUser, user_services.getUser);
 userRouter.post("/register", auth_middleware.writeUser, user_services.register);
-userRouter.post("");
+userRouter.delete("/:uid", auth_middleware.writeUser, user_services.deleteUser);
+userRouter.put("/:uid", auth_middleware.writeUser, user_services.updateUser);
+userRouter.post('/thumbnails', auth_middleware.readUser, user_services.batchGetThumbnails);
+userRouter.post('/:uid/likedLists', auth_middleware.writeUser, user_services.batchWriteLikedLists)
 
 module.exports = userRouter;

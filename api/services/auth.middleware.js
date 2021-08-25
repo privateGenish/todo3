@@ -1,16 +1,18 @@
 const { admin } = require("../../config/firebase.config");
-const access = require("../../cache/access");
 
 async function readUser(req, res, next) {
   try {
-    res.locals.private = false;
+    res.locals.userGetItself = false;
+    res.locals.viewerUID = "";
     const { authorization } = req.headers || undefined;
-    const { uid } = req.params;
+    const { uid } = req.params || "";
     if (authorization != undefined) {
       try {
         const decodedToken = await admin.auth().verifyIdToken(authorization);
         if (decodedToken.exp >= Math.floor(new Date().getTime() / 1000) && decodedToken.uid === uid) {
-          res.locals.private = true;
+          res.locals.userGetItself = true;
+        } else {
+          res.locals.viewerUID = decodedToken.uid;
         }
       } catch (e) {}
     }

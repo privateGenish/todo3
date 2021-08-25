@@ -29,8 +29,8 @@ describe("auth.middleware", () => {
   describe(".readUser", function () {
     this.timeout(5000);
     before(async () => (this.user = await firebase.signInWithPassword("test@test.com", "11223344")));
-    beforeEach(() => (res.locals = { private: undefined }));
-    it("should pass locals.private = true", async () => {
+    beforeEach(() => (res.locals = { userGetItself: undefined }));
+    it("should pass locals.userGetItself = true", async () => {
       const req = {
         headers: {
           authorization: this.user.idToken,
@@ -41,10 +41,10 @@ describe("auth.middleware", () => {
       };
       const next = sinon.stub().returns(function () {});
       await auth_middleware.readUser(req, res, next);
-      expect(res.locals.private).to.be.true;
+      expect(res.locals.userGetItself).to.be.true;
       expect(next).to.be.calledOnce;
     });
-    it("should pass res.local.private = false, bad uid", async () => {
+    it('should pass res.local.userGetItself = false, bad uid', async () => {
       const req = {
         headers: {
           authorization: this.token,
@@ -54,7 +54,23 @@ describe("auth.middleware", () => {
       const next = sinon.stub().returns(function () {});
       await auth_middleware.readUser(req, res, next);
 
-      expect(res.locals.private).to.be.false;
+      expect(res.locals.userGetItself).to.be.false;
+      expect(res.locals.viewerUID).to.be.equal("");
+      expect(next).to.be.calledOnce;
+    });
+    it('should pass res.local.viewerUID = "different", bad uid', async () => {
+      this.anotherUser = await firebase.signInWithPassword('getUser@test.com', "11223344");
+      const req = {
+        headers: {
+          authorization: this.anotherUser.idToken,
+        },
+        params: { uid: this.user.localId },
+      };
+      const next = sinon.stub().returns(function () {});
+      await auth_middleware.readUser(req, res, next);
+
+      expect(res.locals.userGetItself).to.be.false;
+      expect(res.locals.viewerUID).to.be.equal(this.anotherUser.localId);
       expect(next).to.be.calledOnce;
     });
   });

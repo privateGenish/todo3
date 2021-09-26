@@ -4,18 +4,14 @@ const client = new DocumentClient(cred);
 const table = process.env.TABLE;
 
 async function deleteTestItem(pk, sk) {
-  return await client
-    .delete(
-      {
-        TableName: table,
-        Key: {
-          PK: pk,
-          SK: sk,
-        },
-      },
-      () => {}
-    )
-    .promise();
+  const opts = {
+    TableName: table,
+    Key: {
+      PK: pk,
+      SK: sk,
+    },
+  };
+  return await client.delete(opts, () => {}).promise();
 }
 
 async function createTestItem(pk, sk) {
@@ -31,13 +27,15 @@ async function createTestItem(pk, sk) {
 }
 
 async function getSingleItem(pk, sk) {
-  return await client.get({
-    TableName: table,
-    Key: {
-      PK: pk,
-      SK: sk,
-    },
-  }).promise();
+  return await client
+    .get({
+      TableName: table,
+      Key: {
+        PK: pk,
+        SK: sk,
+      },
+    })
+    .promise();
 }
 
 module.exports = { deleteTestItem, createTestItem, getSingleItem };

@@ -1,13 +1,9 @@
-const { Chime, Outposts } = require("aws-sdk");
 const { DocumentClient } = require("aws-sdk/clients/dynamodb");
-const { AssertionError } = require("chai");
-const { O_EXCL } = require("constants");
-const { response } = require("express");
-const { request } = require("https");
 const cred = require("../../config/aws-credentials");
 const client = new DocumentClient(cred);
 const table = process.env.TABLE;
 
+//deprecated
 async function getUser(uid) {
   if (typeof uid !== "string") {
     /// this error should rarely if ever be thrown as express is parsing json values to string
@@ -46,8 +42,7 @@ async function getUserAvailableScope(uid, viewerUID) {
       ":uid": "USER#" + uid,
       ":vu": "USER#" + viewerUID,
     },
-    FilterExpression:
-      "contains(#a, :vu) OR contains(#m, :vu) OR (attribute_not_exists(managers) AND attribute_not_exists(access))",
+    FilterExpression: "contains(#a, :vu) OR contains(#m, :vu) OR attribute_not_exists(access)  OR PK = :vu))",
     ExpressionAttributeNames: {
       "#m": "managers",
       "#a": "access",
@@ -66,7 +61,7 @@ async function getUserAvailableScope(uid, viewerUID) {
   });
   return items;
 }
-
+//@deprecated please do not use!
 async function getUserPublicData(uid) {
   if (typeof uid !== "string") {
     /// this error should rarely if ever be thrown as express is parsing json values to string
@@ -107,6 +102,7 @@ async function register(uid, name) {
         name: name,
       },
       ConditionExpression: "attribute_not_exists(PK)",
+      ExpressionAttributeValues: { ":vu": "USER#" + viewerUID },
     })
     .promise()
     .catch((err) => {
@@ -115,7 +111,7 @@ async function register(uid, name) {
   return result;
 }
 
-async function deleteUser(uid) {
+async function deleteUser(uid, viewerUID) {
   if (typeof uid !== "string") throw TypeError("uid is not a string");
   const query = await client
     .query({
@@ -125,6 +121,8 @@ async function deleteUser(uid) {
         ":uid": "USER#" + uid,
       },
       ProjectionExpression: "PK, SK",
+      FilterExpression: "PK = :vu",
+      ExpressionAttributeValues: { ":vu": "USER#" + viewerUID },
     })
     .promise();
   const items = query.Items;
@@ -152,7 +150,7 @@ async function deleteUser(uid) {
   return;
 }
 
-async function updateUser({ uid, about, name }) {
+async function updateUser({ uid, about, name }, viewerUID) {
   if (typeof uid !== "string") throw TypeError("uid is not a string");
   if (typeof about !== "string" && typeof name !== "string")
     throw TypeError("must provide at least one, about or name. both must be in a string form.");
@@ -164,7 +162,8 @@ async function updateUser({ uid, about, name }) {
       PK: "USER#" + uid,
       SK: "USER#" + uid,
     },
-    ExpressionAttributeValues: {},
+    ConditionExpression: "PK = :vu",
+    ExpressionAttributeValues: { ":vu": "USER#" + viewerUID },
   };
   if (about) {
     opts.UpdateExpression += "about = :val1";
@@ -189,6 +188,7 @@ async function batchGetUsersInfo(uids) {
   };
   opts.RequestItems[table] = {
     ProjectionExpression: "#n, PK",
+    ConditionExpression: "PK = :vu",
     ExpressionAttributeNames: {
       "#n": "name",
     },
@@ -209,7 +209,6 @@ async function batchWriteLikedList(uid, likedList) {
     throw TypeError("uid is not a string or likedList in not an object");
   }
   var item = {};
-  /// this error should rarely if ever be thrown as express is parsing json values to string
   const opts = {
     TableName: table,
     Key: {
@@ -217,17 +216,12 @@ async function batchWriteLikedList(uid, likedList) {
       SK: "USER#" + uid,
     },
     ReturnValues: "ALL_NEW",
-    // ProjectionExpression: "#n, PK, likedLists",
-    // ExpressionAttributeNames: { "#n": "name" },
-    // ConditionExpression: "attribute_exists(likedLists)",
   };
   if (likedList.add) {
     const add = likedList.add;
     var optsSET = opts;
     optsSET.UpdateExpression = " ADD likedLists :a";
-    optsSET.ExpressionAttributeValues = {
-      ":a": client.createSet(add),
-    };
+    optsSET.ExpressionAttributeValues[":a"] = client.createSet(add);
     const response = await client.update(optsSET).promise();
     item = response;
   }
@@ -235,9 +229,7 @@ async function batchWriteLikedList(uid, likedList) {
     const remove = likedList.remove;
     var optsDELETE = opts;
     optsDELETE.UpdateExpression = "DELETE likedLists :re";
-    optsDELETE.ExpressionAttributeValues = {
-      ":re": client.createSet(remove),
-    };
+    optsDELETE.ExpressionAttributeValues[":re"] = client.createSet(remove);
     const response = await client.update(optsDELETE).promise();
     item = response;
   }
@@ -252,8 +244,9 @@ async function batchWriteLikedList(uid, likedList) {
   delete item.Attributes;
   return item;
 }
+
 module.exports = {
-  getUserPublicData,
+  // getUserPublicData,
   getUser,
   register,
   deleteUser,

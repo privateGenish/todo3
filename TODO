@@ -9,6 +9,18 @@ controllers:
         ✔ add liked lists @done(21-08-25 14:40)
         ✔ remove liked lists @done(21-08-25 14:40)
         ✔ batchGetThumbnails @done(21-08-25 12:58)
+        ✔ createList @done(21-09-23 13:01)
+        ✔ getList @done(21-09-10 18:57)
+        ☐ @? getListBatch
+        ✔ deleteList @done(21-09-23 13:01)
+        ✔ updateList (rewrite it) @done(21-09-26 15:56)
+        ✔ updateListAccess @done(21-09-26 15:56)
+        ✔ turnListPublic @done(21-09-26 15:56)
+        ✔ listManagers @done(21-09-26 15:56)
+    socket:
+        ///when viewing a list by any scope live updates should be seen
+        ///so when a manager is entering a edit mode. 
+
 services:
     user:
         ✔ register @done(21-08-18 14:02)
@@ -37,8 +49,11 @@ dashboard:
     ☐ think how.
 
 
-fixme:
+FIXME:
     ✔ user.services.register dont delete nor forbid users @done(21-08-25 16:10)
+    ☐ user.services get operations should return empty error on [] not {} 
+    ☐ write tests for the above fixme
 
 migration:
     ✔ GET /api/user/:uid @done(21-08-23 18:05) // migrated from middlware to controller!
+Archive:

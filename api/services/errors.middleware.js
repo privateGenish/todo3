@@ -23,7 +23,6 @@ class APIError {
   }
 }
 
-
 global.APIError = APIError;
 
 function errorHandler(err, req, res, next) {
@@ -47,6 +46,11 @@ function errorHandler(err, req, res, next) {
   }
   if (err.code == "auth/invalid-token" || err.code == "auth/argument-error") {
     err = APIError.unauthorized();
+  }
+
+  if (err.message == "The conditional request failed") {
+    let msg = errorMessage({ status: 403 });
+    return res.status(msg.Status).send(msg);
   }
 
   if (err instanceof APIError) {

@@ -65,6 +65,18 @@ describe("user.service", () => {
         expect(this.public);
       });
     });
+    it("should throw", async () => {
+      res.locals = { userGetItself: "" };
+      const req = {
+        params: {
+          uid: "some_uid",
+        },
+      };
+      sinon.stub(this.public).returns([]);
+      next = sinon.spy();
+      await user_service.getUser(req, res, next);
+      expect(next.args[0][0] instanceof APIError).to.be.true;
+    });
   });
   describe(".register", () => {
     var next = (args) => console.log(args);

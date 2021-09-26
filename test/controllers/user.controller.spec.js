@@ -16,6 +16,10 @@ describe("user.controller", () => {
         const items = await user_controller.getUser(uid);
         items.forEach((element) => expect(expectedKeys).to.include.members(Object.keys(element)));
       });
+      it("should return empty", async () => {
+        const uid = "not_exists";
+        const items = await user_controller.getUser(uid);
+      });
     });
   });
   describe(".getUserAvailableScope(uid,viewerUID)", () => {
@@ -27,16 +31,6 @@ describe("user.controller", () => {
       items.forEach((element) => listIds.push(element.listId || element.uid));
       expect(listIds).to.containSubset(["<TEST3>"]);
       expect(listIds).to.not.containSubset(["<TEST2>"]);
-    });
-  });
-  describe(".getUserPublicData(uid)", () => {
-    describe("integration test dynamodb", () => {
-      it("should return only public data", async () => {
-        const uid = "<TEST>";
-        const notExpectedKeys = ["access"];
-        const items = await user_controller.getUserPublicData(uid);
-        items.forEach((element) => expect(Object.keys(element)).to.not.include.members(notExpectedKeys));
-      });
     });
   });
   describe(".register(uid,name,email)", async () => {

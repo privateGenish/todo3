@@ -1,5 +1,21 @@
 const { admin } = require("../../config/firebase.config");
 
+async function decodeUID(req, res, next) {
+  try {
+    res.locals.viewerUID = "";
+    const { authorization } = req.headers || undefined;
+    if (authorization != undefined) {
+      try {
+        const decodedToken = await admin.auth().verifyIdToken(authorization);
+        res.locals.viewerUID = decodedToken.uid;
+      } catch (e) {}
+    }
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
 async function readUser(req, res, next) {
   try {
     res.locals.userGetItself = false;
@@ -32,4 +48,5 @@ async function writeUser(req, res, next) {
     return next(err);
   }
 }
-module.exports = { readUser, writeUser };
+
+module.exports = { readUser, writeUser, decodeUID };

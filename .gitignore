@@ -6,4 +6,5 @@ test/
 .vscode/
 .VSCodeCounter/
 TODO
+.env
 !.gitignore

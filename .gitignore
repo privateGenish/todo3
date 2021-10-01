@@ -1,4 +1,9 @@
 node_modules/
 commentOut.js
-.*
+.notes
+test/
+.nyc_output/
+.vscode/
+.VSCodeCounter/
+TODO
 !.gitignore

@@ -5,11 +5,7 @@ files:
     destination: home/ec2_user/todo_app
 hooks:
   BeforeInstall:
-    - location: scripts/install_dependencies.sh
-      timeout: 300
-      runas: ec2_user
-  AfterInstall:
-    - location: scripts/change_permissions.sh
+    - location: scripts/before_install.sh
       timeout: 300
       runas: ec2_user
   ApplicationStart:

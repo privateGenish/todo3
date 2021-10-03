@@ -2,18 +2,18 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: home/ec2_user/todo_app
+    destination: home/ec2-user/todo_app
 hooks:
   BeforeInstall:
     - location: scripts/before_install.sh
       timeout: 300
-      runas: ec2_user
+      runas: ec2-user
   ApplicationStart:
     - location: scripts/start_server.sh
     - location: scripts/create_test_db.sh
       timeout: 300
-      runas: ec2_user
+      runas: ec2-user
   ApplicationStop:
     - location: scripts/stop_server.sh
       timeout: 300
-      runas: ec2_user
+      runas: ec2-user

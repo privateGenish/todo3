@@ -9,11 +9,10 @@ hooks:
       timeout: 300
       runas: ec2-user
   ApplicationStart:
-    - location: scripts/start_server.sh
-    - location: scripts/create_test_db.sh
+    - location: scripts/application_stops.sh
       timeout: 300
       runas: ec2-user
   ApplicationStop:
-    - location: scripts/stop_server.sh
+    - location: scripts/application_stops.sh
       timeout: 300
       runas: ec2-user

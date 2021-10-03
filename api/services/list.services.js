@@ -86,4 +86,4 @@ async function updateManagers(req, res, next) {
   }
 }
 
-module.exports = { getList, createList, rewriteList, updateList, deleteList, makeListPublic, updateAccess, updateManagers };
+module.exports = { getList, createList, updateList, deleteList, makeListPublic, updateAccess, updateManagers };

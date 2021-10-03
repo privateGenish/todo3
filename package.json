@@ -37,6 +37,7 @@
         "firebase-admin": "^9.11.0",
         "http": "0.0.1-security",
         "jose": "^3.14.3",
+        "path": "^0.12.7",
         "socket.io": "^2.4.1",
         "sqlite": "^4.0.23",
         "sqlite3": "^5.0.2",

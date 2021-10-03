@@ -4,6 +4,10 @@ files:
   - source: /
     destination: home/ec2-user/todo_app
 hooks:
+  ApplicationStop:
+    - location: scripts/application_stops.sh
+      timeout: 300
+      runas: ec2-user
   BeforeInstall:
     - location: scripts/before_install.sh
       timeout: 300
@@ -12,7 +16,4 @@ hooks:
     - location: scripts/application_starts.sh
       timeout: 300
       runas: ec2-user
-  ApplicationStop:
-    - location: scripts/application_stops.sh
-      timeout: 300
-      runas: ec2-user
+

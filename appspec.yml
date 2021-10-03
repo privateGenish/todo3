@@ -9,7 +9,7 @@ hooks:
       timeout: 300
       runas: ec2-user
   ApplicationStart:
-    - location: scripts/application_stops.sh
+    - location: scripts/application_starts.sh
       timeout: 300
       runas: ec2-user
   ApplicationStop:

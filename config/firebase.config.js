@@ -2,11 +2,13 @@ require("dotenv").config();
 
 var admin = require("firebase-admin");
 
+const private_key = JSON.stringify(process.env.private_key).replace(/\\\\n/g, '\n');
+
 const serviceAccount = {
   type: "service_account",
   project_id: "todoapp-68338",
   private_key_id: process.env.private_key_id,
-  private_key: process.env.private_key.replace(/\\n/g, "\n"),
+  private_key: private_key,
   client_email: "firebase-adminsdk-qbov8@todoapp-68338.iam.gserviceaccount.com",
   client_id: "106592824360340477460",
   auth_uri: "https://accounts.google.com/o/oauth2/auth",

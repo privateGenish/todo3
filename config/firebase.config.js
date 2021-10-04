@@ -2,7 +2,7 @@ require("dotenv").config();
 
 var admin = require("firebase-admin");
 
-const private_key = JSON.stringify(process.env.private_key).replace(/\\\\n/g, '\n');
+const private_key = process.env.private_key;
 
 const serviceAccount = {
   type: "service_account",
@@ -17,7 +17,7 @@ const serviceAccount = {
   client_x509_cert_url:
     "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-qbov8%40todoapp-68338.iam.gserviceaccount.com",
 };
-console.log(serviceAccount)
+console.log(serviceAccount);
 
 console.log("Initalizing Firebase");
 

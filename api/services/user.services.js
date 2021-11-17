@@ -16,6 +16,7 @@ async function getUser(req, res, next) {
 async function register(req, res, next) {
   try {
     const { name, uid } = req.body;
+    if(uid != res.locals.viewerUID) throw APIError.forbidden();
     if (typeof uid !== "string" || typeof name !== "string") throw APIError.typeError("uid", "name");
     await user_controller.register(uid, name);
     return res.status(201).send();
@@ -24,11 +25,12 @@ async function register(req, res, next) {
   }
 }
 
-async function deleteUser(req, res) {
+async function deleteUser(req, res, next) {
   try {
     const { uid } = req.params;
+    if(res.locals.viewerUID != uid) throw APIError.forbidden();
     await user_controller.deleteUser(uid);
-    await admin.auth().deleteUser(uid, res.locals.viewerUID);
+    await admin.auth().deleteUser(uid);
     return res.status(200).send();
   } catch (err) {
     next(err);
@@ -37,7 +39,7 @@ async function deleteUser(req, res) {
 
 async function updateUser(req, res, next) {
   try {
-    const uid = req.params;
+    const uid = JSON.stringify(req.params);
     const { name, about } = req.body;
     if (typeof about !== "string" || typeof name !== "string") throw APIError.typeError("about", "name");
     await user_controller.updateUser({ uid: uid, about: about, name: name }, res.locals.viewerUID);
@@ -62,7 +64,7 @@ async function batchWriteLikedList(req, res, next) {
   try {
     const likedLists = req.body.likedLists;
     const uid = req.params.uid;
-    if (res.locals.viewerUID !== uid) throw APIError.unauthorized;
+    if (res.locals.viewerUID !== uid) throw APIError.forbidden();
     if (!Array.isArray(likedLists)) throw APIError.typeError("likedLists");
     const response = await user_controller.batchWriteLikedList(uid, likedLists);
     res.send(response);

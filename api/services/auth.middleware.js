@@ -2,7 +2,7 @@ const { admin } = require("../../config/firebase.config");
 
 async function decodeUID(req, res, next) {
   try {
-    res.locals.viewerUID = "";
+    res.locals.viewerUID = undefined;
     const { authorization } = req.headers || undefined;
     if (authorization != undefined) {
       try {

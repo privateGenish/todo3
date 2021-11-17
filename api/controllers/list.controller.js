@@ -75,10 +75,11 @@ async function getPermitedList(lid, viewerUID) {
   const opts = {
     TableName: table,
     IndexName: GSI1,
-    FilterExpression: "contains(#a, :vu) OR contains(#m, :vu) OR attribute_not_exists(access) OR PK = :vu",
+    FilterExpression: "contains(#a, :vu) OR contains(#m, :vu) OR attribute_not_exists(access) OR #o = :vu",
     ExpressionAttributeNames: {
       "#m": "managers",
       "#a": "access",
+      "#o": "owner",
     },
     KeyConditionExpression: "SK = :lid",
     ExpressionAttributeValues: { ":lid": "LIST#" + lid, ":vu": "USER#" + viewerUID },
@@ -90,6 +91,9 @@ async function getPermitedList(lid, viewerUID) {
     item.lid = item.SK.substring(5);
     delete item.PK;
     delete item.SK;
+    delete item.owner;
+    if (item.access) item.access = Array.from(item.access, (x) => x.substring(5));
+    if (item.managers) item.managers = Array.from(item.managers, (x) => x.substring(5));
     return item;
   }
   return item.Items;
@@ -118,8 +122,9 @@ async function createList(uid, list) {
       PK: "USER#" + uid,
       SK: "LIST#" + lid,
     },
-    ConditionExpression: "attribute_not_exists(SK) AND attribute_exists(PK)",
+    ConditionExpression: "attribute_not_exists(PK) and attribute_not_exists(SK) ",
   };
+  list.owner = "USER#" + uid;
   for (var key in list) {
     opts.Item[key] = list[key];
   }

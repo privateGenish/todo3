@@ -1,9 +1,5 @@
 const list_controller = require("../controllers/list.controller");
 
-const documentLink = {
-  validList: "someLink.com",
-};
-
 async function getList(req, res, next) {
   try {
     const { lid } = req.params;
@@ -21,11 +17,13 @@ async function createList(req, res, next) {
     if (!list_controller.validateList(list)) {
       throw APIError.typeError(
         "the provided list is not structured correctly, please visit the documents for more information",
-        documentLink.validList
       );
     }
+    if (res.local.viewerUID == undefined){
+      throw APIError.unauthorized()
+    }
     const item = await list_controller.createList(res.local.viewerUID, list);
-    return res.send(item);
+    return res.status(201).send(item);
   } catch (err) {
     next(err);
   }
@@ -37,9 +35,8 @@ async function updateList(req, res, next) {
     if (!list_controller.validateList(tasks))
       throw APIError.typeError(
         "the provided list is not structured correctly, please visit the documents for more information",
-        documentLink.validList
       );
-    const item = await list_controller.updateAccessWithPermission(uid, lid, tasks, res.local.viewerUID);
+    const item = await list_controller.updateListWithPermission(uid, lid, tasks, res.local.viewerUID);
     res.send(item);
   } catch (err) {
     next(err);

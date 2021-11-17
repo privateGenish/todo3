@@ -42,8 +42,9 @@ async function getUserAvailableScope(uid, viewerUID) {
       ":uid": "USER#" + uid,
       ":vu": "USER#" + viewerUID,
     },
-    FilterExpression: "contains(#a, :vu) OR contains(#m, :vu) OR attribute_not_exists(access)  OR PK = :vu))",
+    FilterExpression: "contains(#a, :vu) OR contains(#m, :vu) OR attribute_not_exists(access) OR #o = :vu",
     ExpressionAttributeNames: {
+      "#o": "owner",
       "#m": "managers",
       "#a": "access",
     },
@@ -56,6 +57,7 @@ async function getUserAvailableScope(uid, viewerUID) {
     } else {
       element.listId = element.SK.substring(5);
     }
+    if(viewerUID != element.uid) delete element.likedLists;
     delete element.PK;
     delete element.SK;
   });
@@ -111,7 +113,7 @@ async function register(uid, name) {
   return result;
 }
 
-async function deleteUser(uid, viewerUID) {
+async function deleteUser(uid) {
   if (typeof uid !== "string") throw TypeError("uid is not a string");
   const query = await client
     .query({
@@ -121,8 +123,6 @@ async function deleteUser(uid, viewerUID) {
         ":uid": "USER#" + uid,
       },
       ProjectionExpression: "PK, SK",
-      FilterExpression: "PK = :vu",
-      ExpressionAttributeValues: { ":vu": "USER#" + viewerUID },
     })
     .promise();
   const items = query.Items;
